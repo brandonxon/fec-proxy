@@ -17,7 +17,7 @@ app.use(express.static(path.join(__dirname, '../dist')));
 
 app.get('/', (req, res) => {
   console.log(req.url);
-  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 module.exports = app;
