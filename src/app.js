@@ -17,8 +17,6 @@ app.use(logger);
 app.use(express.static(path.join(__dirname, '../dist')));
 
 app.get('/middle/api/movie/:movieId', (req, res) => {
-  console.log('IN PROXY SERVER!!');
-  // res.send('hello world');
   console.log('req.params', req.params);
   const { movieId } = req.params;
   console.log(movieId);
@@ -34,12 +32,24 @@ app.get('/middle/api/movie/:movieId', (req, res) => {
     .catch(err => console.log(err));
 });
 
-app.get('middle/api/review/:id', (req, res) => {
-  console.log(req.url);
-  // const options = {
-  //   url: 
-  // }
-  console.log(res.data);
+app.get('middle/api/review/:reviewId', (req, res) => {
+  console.log('req.params', req.params);
+  const { reviewId } = req.params;
+  const options = {
+    url: `http://middle:1337/api/review/${reviewId}`,
+    method: 'get',
+  };
+  axios(options)
+    .then(results => {
+      console.log('Proxy got reviews');
+      res.end(JSON.stringify(res));
+    })
+    .catch(err => {
+      console.log('ERROR from proxy server', err);
+    });
+});
+
+app.get('suggested/api/s', (req, res) => {
 });
 
 app.get('/', (req, res) => {
