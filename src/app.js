@@ -32,7 +32,7 @@ app.get('/middle/api/movie/:movieId', (req, res) => {
     .catch(err => console.log(err));
 });
 
-app.get('middle/api/review/:reviewId', (req, res) => {
+app.get('/middle/api/review/:reviewId', (req, res) => {
   console.log('req.params', req.params);
   const { reviewId } = req.params;
   const options = {
@@ -41,8 +41,8 @@ app.get('middle/api/review/:reviewId', (req, res) => {
   };
   axios(options)
     .then(results => {
-      console.log('Proxy got reviews');
-      res.end(JSON.stringify(res));
+      console.log('Proxy got reviews', results.data);
+      res.send(results.data);
     })
     .catch(err => {
       console.log('ERROR from proxy server', err);
