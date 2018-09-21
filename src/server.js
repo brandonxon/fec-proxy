@@ -1,3 +1,4 @@
+const httpProxy = require('http-proxy');
 const app = require('./app');
 
 app.listen(5000, () => {
