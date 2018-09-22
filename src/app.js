@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const path = require('path');
 const express = require('express');
 const cors = require('cors');
@@ -10,6 +12,11 @@ const CircularJSON = require('circular-json');
 const app = express();
 const logger = morgan('dev');
 
+const config = require('../config/config');
+const serverIp = config.serverIp;
+
+console.log(config);
+
 app.use(cors());
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -19,12 +26,13 @@ app.use(express.static(path.join(__dirname, '../dist')));
 
 app.get('/middle/api/movie/:movieId', (req, res) => {
   const { movieId } = req.params;
-  console.log(movieId);
   const options = {
     // url: `http://middle:1337/api/movie/${movieId}`,
-    url: `http://54.193.118.56:1337/api/movie/${movieId}`,
+    // url: `http://54.193.118.56:1337/api/movie/${movieId}`,
+    url: `http://${serverIp}:1337/api/movie/${movieId}`,
     method: 'get',
   };
+  console.log('Getting...', options.url);
   axios(options)
     .then(results => {
       console.log('Proxy success');
@@ -34,11 +42,10 @@ app.get('/middle/api/movie/:movieId', (req, res) => {
 });
 
 app.get('/middle/api/review/:reviewId', (req, res) => {
-  console.log('req.params', req.params);
   const { reviewId } = req.params;
   const options = {
     // url: `http://middle:1337/api/review/${reviewId}`
-    url: `http://54.193.118.56:1337/api/review/${reviewId}`,
+    url: `http://${serverIp}:1337/api/review/${reviewId}`,
     method: 'get',
   };
   console.log('getting ', options.url);
@@ -54,16 +61,14 @@ app.get('/middle/api/review/:reviewId', (req, res) => {
 
 // http://54.215.237.90:5000/main/api/title/87 
 app.get('/main/api/title/:id', (req, res) => {
-  console.log('req.params', req.params);
   const { id } = req.params;
   const options = {
-    url: `http://54.193.118.56:8000/api/title/${id}`,
+    url: `http://${serverIp}:8000/api/title/${id}`,
     method: 'get',
   };
-
+  console.log(options.url);
   axios(options)
     .then(response => {
-      console.log('MAIN', response);
       res.send(response.data);
     })
     .catch(err => {
@@ -72,12 +77,11 @@ app.get('/main/api/title/:id', (req, res) => {
 });
 
 app.get('/suggested/api/s', (req, res) => {
-  console.log('now its working.........?')
-  console.log('getting', `http://54.193.118.56:8080/api/s`);
   const options = {
-    url: `http://54.193.118.56:8080/suggested/api/s`,
+    url: `http://${serverIp}:8080/suggested/api/s`,
     method: 'get',
   };
+  console.log('Getting... ', options.url);
   axios(options)
     .then(results => {
       console.log('SUGGESTED RESULTS RECIEVED', results.data[0]);
@@ -91,10 +95,7 @@ app.get('/suggested/api/s', (req, res) => {
 
 app.get('/', (req, res) => {
   console.log(req.url);
-  console.log('are my changes getting reflected?')
   res.sendFile(path.join(__dirname, '../public', 'index.html'));
 });
-
-console.log('this is not working');
 
 module.exports = app;
